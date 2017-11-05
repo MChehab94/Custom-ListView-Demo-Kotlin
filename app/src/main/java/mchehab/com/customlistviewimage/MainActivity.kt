@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
@@ -42,6 +43,8 @@ class MainActivity : AppCompatActivity() {
         progressBarView.findViewById<ProgressBar>(R.id.progressBar)
     }
 
+    var asyncTask: AsyncTaskWait? = null
+
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, IntentFilter
@@ -72,10 +75,13 @@ class MainActivity : AppCompatActivity() {
             override fun onScroll(view: AbsListView?, firstVisibleItem: Int, visibleItemCount: Int, totalItemCount: Int) {}
 
             override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
-                if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
-                    if(listView.lastVisiblePosition == listPerson.size){
+                if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && listView
+                        .lastVisiblePosition == listPerson.size){
+                    if(asyncTask == null || asyncTask?.status != AsyncTask.Status.RUNNING){
                         progressBar.visibility = View.VISIBLE
-                        AsyncTaskWait(WeakReference(this@MainActivity.applicationContext)).execute()
+                        asyncTask = AsyncTaskWait(WeakReference(this@MainActivity
+                                .applicationContext))
+                        asyncTask!!.execute()
                     }
                 }
             }
