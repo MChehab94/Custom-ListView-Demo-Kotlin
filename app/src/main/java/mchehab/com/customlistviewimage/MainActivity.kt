@@ -117,8 +117,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun addMoreItems(){
         val size = listPerson.size
-        (1..10).filter { (size + it) < listCompleteData.size }
-                .mapTo(listPerson) { listCompleteData[it + size] }
+        for (i in 1..10) {
+            if ((size + i) < listCompleteData.size) {
+                listViewAdapter.addItem(listCompleteData[size + i])
+            }
+        }
     }
 
     private fun readListFromFile(): List<Person>{
