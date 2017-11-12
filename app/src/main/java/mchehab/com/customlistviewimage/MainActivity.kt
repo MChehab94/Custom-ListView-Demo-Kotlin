@@ -8,7 +8,9 @@ import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.LocalBroadcastManager
+import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
+import android.view.Menu
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ListView
@@ -16,6 +18,10 @@ import android.widget.ProgressBar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.ref.WeakReference
+import mchehab.com.customlistviewimage.R.id.progressBar
+import android.support.v4.widget.SearchViewCompat.setOnQueryTextListener
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,6 +74,27 @@ class MainActivity : AppCompatActivity() {
         listView.addFooterView(progressBar)
         listView.adapter = listViewAdapter
         setListViewOnScrollListener()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+
+        menuInflater.inflate(R.menu.activity_main_menu, menu)
+
+        val searchView = menu!!.findItem(R.id.action_search).actionView as SearchView
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                progressBar.visibility = View.GONE
+                listViewAdapter.filter(newText)
+                return true
+            }
+        })
+
+        return true
     }
 
     private fun setListViewOnScrollListener(){
