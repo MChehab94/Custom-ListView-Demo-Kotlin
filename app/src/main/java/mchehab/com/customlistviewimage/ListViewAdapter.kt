@@ -12,7 +12,8 @@ import android.widget.TextView
 /**
  * Created by muhammadchehab on 10/29/17.
  */
-class ListViewAdapter(var context: Context, var listPerson: List<Person>) : BaseAdapter() {
+class ListViewAdapter(var context: Context, var listPerson: MutableList<Person>, var listPersonFilter:
+MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView
@@ -36,6 +37,15 @@ class ListViewAdapter(var context: Context, var listPerson: List<Person>) : Base
         viewHolder.imageViewProfilePic.setImageDrawable(getImageDrawable(person.imageName))
 
         return view
+    }
+
+    fun filter(text: String){
+        if (text.length == 0)
+            listPersonFilter.addAll(listPerson)
+        else
+            listPersonFilter.filter { person -> "${person.firstName} ${person.lastName}".contains(text) }
+
+        notifyDataSetChanged()
     }
 
     private fun getImageDrawable(imageName: String): Drawable {
