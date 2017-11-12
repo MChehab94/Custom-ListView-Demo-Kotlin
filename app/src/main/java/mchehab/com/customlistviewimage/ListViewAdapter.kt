@@ -30,7 +30,7 @@ MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
             viewHolder = view.tag as ViewHolder
         }
 
-        val person = listPerson[position]
+        val person = listPersonFilter[position]
 
         viewHolder.textViewName.text = "${person.firstName} ${person.lastName}"
         viewHolder.textViewDescription.text = person.description
@@ -40,10 +40,13 @@ MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
     }
 
     fun filter(text: String){
+        listPersonFilter.clear()
         if (text.length == 0)
             listPersonFilter.addAll(listPerson)
-        else
-            listPersonFilter.filter { person -> "${person.firstName} ${person.lastName}".contains(text) }
+        else{
+            listPersonFilter =  listPerson.filter { person ->  "${person.firstName} ${person
+                    .lastName}".toLowerCase().contains(text)}.toMutableList()
+        }
 
         notifyDataSetChanged()
     }
@@ -55,7 +58,7 @@ MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
     }
 
     override fun getItem(position: Int): Any {
-        return listPerson[position]
+        return listPersonFilter[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -63,7 +66,7 @@ MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
     }
 
     override fun getCount(): Int {
-        return listPerson.size
+        return listPersonFilter.size
     }
 
     class ViewHolder{
