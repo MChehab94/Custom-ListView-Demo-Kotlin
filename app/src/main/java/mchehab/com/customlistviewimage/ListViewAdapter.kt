@@ -39,6 +39,11 @@ MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
         return view
     }
 
+    fun addItem(person: Person){
+        listPerson.add(person)
+        listPersonFilter.add(person)
+    }
+
     fun filter(text: String){
         listPersonFilter.clear()
         if (text.length == 0)
