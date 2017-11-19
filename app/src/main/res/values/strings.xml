@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">CustomListViewImage</string>
+    <string-array name="images">
+        <item>image1</item>
+        <item>image2</item>
+        <item>image3</item>
+        <item>image4</item>
+        <item>image5</item>
+        <item>image6</item>
+        <item>image7</item>
+        <item>image8</item>
+        <item>image9</item>
+    </string-array>
 </resources>
