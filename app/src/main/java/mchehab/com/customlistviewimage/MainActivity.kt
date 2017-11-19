@@ -1,5 +1,6 @@
 package mchehab.com.customlistviewimage
 
+import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -106,6 +107,17 @@ class MainActivity : AppCompatActivity() {
         })
 
         return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(requestCode == 101 && resultCode == Activity.RESULT_OK){
+            val person = Person(data!!.getStringExtra("firstName"), data!!.getStringExtra
+            ("lastName"), data!!.getStringExtra("description"), data!!.getStringExtra
+            ("imageName"))
+            listViewAdapter.addItem(person)
+            listViewAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun setListViewOnScrollListener(){
