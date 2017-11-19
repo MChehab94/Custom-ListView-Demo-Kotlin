@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.AsyncTask
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.FloatingActionButton
 import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
@@ -18,8 +19,6 @@ import android.widget.ProgressBar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.lang.ref.WeakReference
-import mchehab.com.customlistviewimage.R.id.progressBar
-import android.support.v4.widget.SearchViewCompat.setOnQueryTextListener
 
 
 
@@ -34,6 +33,10 @@ class MainActivity : AppCompatActivity() {
 
     val listViewAdapter: ListViewAdapter by lazy {
         ListViewAdapter(this, listPerson)
+    }
+
+    val floatingActionButtonAdd by lazy {
+        findViewById<FloatingActionButton>(R.id.floatingActionButtonAdd)
     }
 
     val broadcastReceiver = object: BroadcastReceiver(){
@@ -74,6 +77,14 @@ class MainActivity : AppCompatActivity() {
         listView.addFooterView(progressBar)
         listView.adapter = listViewAdapter
         setListViewOnScrollListener()
+        setFloatingActionButtonAddListener()
+    }
+
+    private fun setFloatingActionButtonAddListener(){
+        floatingActionButtonAdd.setOnClickListener {
+            val intent = Intent(this, ActivityAdd::class.java)
+            startActivityForResult(intent, 101)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
