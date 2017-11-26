@@ -12,8 +12,11 @@ import android.widget.TextView
 /**
  * Created by muhammadchehab on 10/29/17.
  */
-class ListViewAdapter(var context: Context, var listPerson: MutableList<Person>, var listPersonFilter:
-MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
+class ListViewAdapter(var context: Context,
+                      var listPerson: MutableList<Person>,
+                      var listPersonFilter: MutableList<Person> = ArrayList(listPerson),
+                      var listPersonsSelected: MutableList<Person> = ArrayList(),
+                      var listSelectedRows: MutableList<View> = ArrayList()) : BaseAdapter() {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView
@@ -36,12 +39,36 @@ MutableList<Person> = ArrayList(listPerson)) : BaseAdapter() {
         viewHolder.textViewDescription.text = person.description
         viewHolder.imageViewProfilePic.setImageDrawable(getImageDrawable(person.imageName))
 
+        val resource = if (listPersonsSelected.contains(person)) R.color.colorDarkGray else R.color.colorWhite
+        view.setBackgroundResource(resource)
+
         return view
     }
 
     fun addItem(person: Person){
         listPerson.add(person)
         listPersonFilter.add(person)
+    }
+
+    fun handleLongPress(position: Int, view: View) {
+        if (listSelectedRows.contains(view)) {
+            listSelectedRows.remove(view)
+            listPersonsSelected.remove(listPerson.get(position))
+            view.setBackgroundResource(R.color.colorWhite)
+        } else {
+            listPersonsSelected.add(listPerson.get(position))
+            listSelectedRows.add(view)
+            view.setBackgroundResource(R.color.colorDarkGray)
+        }
+    }
+
+    fun removeSelectedPersons() {
+        listPerson.removeAll(listPersonsSelected)
+        listPersonFilter.removeAll(listPersonsSelected)
+        listPersonsSelected.clear()
+        for (view in listSelectedRows)
+            view.setBackgroundResource(R.color.colorWhite)
+        listSelectedRows.clear()
     }
 
     fun filter(text: String){
