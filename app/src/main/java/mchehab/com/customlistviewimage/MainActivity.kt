@@ -13,6 +13,7 @@ import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.widget.SearchView
 import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.AbsListView
 import android.widget.ListView
@@ -55,6 +56,9 @@ class MainActivity : AppCompatActivity() {
 
     var asyncTask: AsyncTaskWait? = null
 
+    var menuItemSearch: MenuItem? = null
+    var menuItemDelete: MenuItem? = null
+
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, IntentFilter
@@ -78,6 +82,7 @@ class MainActivity : AppCompatActivity() {
         listView.addFooterView(progressBar)
         listView.adapter = listViewAdapter
         setListViewOnScrollListener()
+        setListOnLongPressListener()
         setFloatingActionButtonAddListener()
     }
 
@@ -88,11 +93,37 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun loadData() {
+        if(asyncTask == null || asyncTask?.status != AsyncTask.Status.RUNNING){
+            progressBar.visibility = View.VISIBLE
+            asyncTask = AsyncTaskWait(WeakReference(this@MainActivity
+                    .applicationContext))
+            asyncTask!!.execute()
+        }
+    }
+
+    private fun setListOnLongPressListener() {
+        listView.setOnItemLongClickListener { parent, view, position, id ->
+            listViewAdapter.handleLongPress(position, view)
+            if (listViewAdapter.listPersonsSelected.size > 0) {
+                showDeleteMenu(true)
+            } else {
+                showDeleteMenu(false)
+            }
+            true
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
 
         menuInflater.inflate(R.menu.activity_main_menu, menu)
 
-        val searchView = menu!!.findItem(R.id.action_search).actionView as SearchView
+        menuItemSearch = menu!!.findItem(R.id.action_search)
+        menuItemDelete = menu.findItem(R.id.action_delete)
+
+        menuItemDelete!!.setVisible(false)
+
+        val searchView = menuItemSearch!!.actionView as SearchView
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -106,15 +137,33 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        menuItemDelete!!.setOnMenuItemClickListener {
+            runOnUiThread {
+                listViewAdapter.removeSelectedPersons()
+                listViewAdapter.notifyDataSetChanged()
+                if (listViewAdapter.count <= 5) {
+                    loadData()
+                }
+            }
+            showDeleteMenu(false)
+            true
+        }
+
         return true
+    }
+
+    private fun showDeleteMenu(show: Boolean){
+        menuItemDelete!!.setVisible(show)
+        menuItemSearch!!.setVisible(!show)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 101 && resultCode == Activity.RESULT_OK){
-            val person = Person(data!!.getStringExtra("firstName"), data!!.getStringExtra
-            ("lastName"), data!!.getStringExtra("description"), data!!.getStringExtra
-            ("imageName"))
+            val person = Person(data!!.getStringExtra("firstName"),
+                    data.getStringExtra("lastName"),
+                    data.getStringExtra("description"),
+                    data.getStringExtra("imageName"))
             listViewAdapter.addItem(person)
             listViewAdapter.notifyDataSetChanged()
         }
@@ -127,12 +176,7 @@ class MainActivity : AppCompatActivity() {
             override fun onScrollStateChanged(view: AbsListView?, scrollState: Int) {
                 if(scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && listView
                         .lastVisiblePosition == listPerson.size){
-                    if(asyncTask == null || asyncTask?.status != AsyncTask.Status.RUNNING){
-                        progressBar.visibility = View.VISIBLE
-                        asyncTask = AsyncTaskWait(WeakReference(this@MainActivity
-                                .applicationContext))
-                        asyncTask!!.execute()
-                    }
+                    loadData()
                 }
             }
         })
