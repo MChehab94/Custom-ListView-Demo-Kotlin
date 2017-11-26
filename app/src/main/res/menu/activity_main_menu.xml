@@ -6,4 +6,10 @@
           app:showAsAction="collapseActionView|always"
           app:actionViewClass="android.support.v7.widget.SearchView"
           android:layout_width="wrap_content"/>
+
+    <item android:id="@+id/action_delete"
+          android:title=""
+          android:icon="@android:drawable/ic_menu_delete"
+          app:showAsAction="collapseActionView|always"/>
+
 </menu>
