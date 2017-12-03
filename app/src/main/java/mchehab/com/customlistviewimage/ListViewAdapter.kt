@@ -50,6 +50,16 @@ class ListViewAdapter(var context: Context,
         listPersonFilter.add(person)
     }
 
+    fun setItem(position: Int, person: Person){
+        for(i in listPerson.indices){
+            if(listPerson[i].equals(listPersonFilter[position])){
+                listPerson.set(i, person)
+                break
+            }
+        }
+        listPersonFilter.set(position, person)
+    }
+
     fun handleLongPress(position: Int, view: View) {
         if (listSelectedRows.contains(view)) {
             listSelectedRows.remove(view)
