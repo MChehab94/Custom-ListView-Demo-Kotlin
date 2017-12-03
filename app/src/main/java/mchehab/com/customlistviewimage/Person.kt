@@ -1,7 +1,15 @@
 package mchehab.com.customlistviewimage
 
+import org.parceler.Parcel
+import org.parceler.ParcelConstructor
+import org.parceler.ParcelProperty
+
 /**
  * Created by muhammadchehab on 10/29/17.
  */
-data class Person(var firstName: String, var lastName: String, var description: String, var
-imageName: String)
+@Parcel
+data class Person @ParcelConstructor
+constructor(@ParcelProperty("firstName") var firstName: String,
+        @ParcelProperty("lastName") var lastName:String,
+        @ParcelProperty("description") var description: String,
+        @ParcelProperty("imagename") var imageName: String)
