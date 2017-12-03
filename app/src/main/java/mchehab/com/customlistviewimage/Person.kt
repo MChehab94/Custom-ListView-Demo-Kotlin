@@ -12,4 +12,4 @@ data class Person @ParcelConstructor
 constructor(@ParcelProperty("firstName") var firstName: String,
         @ParcelProperty("lastName") var lastName:String,
         @ParcelProperty("description") var description: String,
-        @ParcelProperty("imagename") var imageName: String)
+        @ParcelProperty("imageName") var imageName: String)
