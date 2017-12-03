@@ -24,13 +24,21 @@ class ActivityAdd : AppCompatActivity() {
         findViewById<EditText>(R.id.editTextDescription)
     }
 
-    val person = Person("", "", "", "")
+    val spinnerImages by lazy{
+        findViewById<Spinner>(R.id.spinnerImages)
+    }
+
+    var person = Person("", "", "", "")
+
+    var listImages = mutableListOf<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add)
 
-        val spinnerImages = findViewById<Spinner>(R.id.spinnerImages)
+        listImages = resources.getStringArray(R.array.images).toMutableList()
+
+
         val button = findViewById<Button>(R.id.buttonAdd)
         button.setOnClickListener {
             if(isValid()){
@@ -50,6 +58,27 @@ class ActivityAdd : AppCompatActivity() {
                 displayAlertDialog()
             }
         }
+
+        checkExtras()
+    }
+
+    private fun checkExtras(){
+        if(hasExtras()){
+            person = Parcels.unwrap(intent.extras.getParcelable("person"))
+            editTextFirstName.setText(person.firstName)
+            editTextLastName.setText(person.lastName)
+            editTextDescription.setText(person.description)
+            for (i in listImages.indices) {
+                if (listImages[i] == person.imageName) {
+                    spinnerImages.setSelection(i)
+                    break
+                }
+            }
+        }
+    }
+
+    private fun hasExtras(): Boolean{
+        return intent.extras != null
     }
 
     private fun isValid(): Boolean{

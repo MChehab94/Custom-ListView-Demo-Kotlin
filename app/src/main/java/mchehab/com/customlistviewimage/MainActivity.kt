@@ -85,6 +85,18 @@ class MainActivity : AppCompatActivity() {
         setListViewOnScrollListener()
         setListOnLongPressListener()
         setFloatingActionButtonAddListener()
+        setListViewOnItemClickListener()
+    }
+
+    private fun setListViewOnItemClickListener(){
+        listView.setOnItemClickListener { parent, view, position, id ->
+            val person = listViewAdapter.getItem(position)
+            val intent = Intent(this@MainActivity, ActivityAdd::class.java)
+            val bundle = Bundle()
+            bundle.putParcelable("person", Parcels.wrap(person))
+            intent.putExtras(bundle)
+            startActivityForResult(intent, 102)
+        }
     }
 
     private fun setFloatingActionButtonAddListener(){
@@ -116,7 +128,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-
         menuInflater.inflate(R.menu.activity_main_menu, menu)
 
         menuItemSearch = menu!!.findItem(R.id.action_search)
