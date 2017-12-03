@@ -20,6 +20,7 @@ import android.widget.ListView
 import android.widget.ProgressBar
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import org.parceler.Parcels
 import java.lang.ref.WeakReference
 
 
@@ -160,10 +161,7 @@ class MainActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == 101 && resultCode == Activity.RESULT_OK){
-            val person = Person(data!!.getStringExtra("firstName"),
-                    data.getStringExtra("lastName"),
-                    data.getStringExtra("description"),
-                    data.getStringExtra("imageName"))
+            val person = Parcels.unwrap<Person>(data!!.extras.getParcelable("person"))
             listViewAdapter.addItem(person)
             listViewAdapter.notifyDataSetChanged()
         }
