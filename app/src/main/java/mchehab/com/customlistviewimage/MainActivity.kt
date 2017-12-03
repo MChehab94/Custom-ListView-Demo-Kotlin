@@ -60,6 +60,8 @@ class MainActivity : AppCompatActivity() {
     var menuItemSearch: MenuItem? = null
     var menuItemDelete: MenuItem? = null
 
+    var personEditPosition = 0
+
     override fun onResume() {
         super.onResume()
         LocalBroadcastManager.getInstance(this).registerReceiver(broadcastReceiver, IntentFilter
@@ -90,6 +92,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setListViewOnItemClickListener(){
         listView.setOnItemClickListener { parent, view, position, id ->
+            personEditPosition = position
             val person = listViewAdapter.getItem(position)
             val intent = Intent(this@MainActivity, ActivityAdd::class.java)
             val bundle = Bundle()
@@ -171,10 +174,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == 101 && resultCode == Activity.RESULT_OK){
+        if(resultCode == Activity.RESULT_OK){
             val person = Parcels.unwrap<Person>(data!!.extras.getParcelable("person"))
-            listViewAdapter.addItem(person)
-            listViewAdapter.notifyDataSetChanged()
+            if(requestCode == 101){
+                listViewAdapter.addItem(person)
+                listViewAdapter.notifyDataSetChanged()
+            }else if(requestCode == 102){
+                listViewAdapter.setItem(personEditPosition, person)
+                listViewAdapter.notifyDataSetChanged()
+            }
         }
     }
 
